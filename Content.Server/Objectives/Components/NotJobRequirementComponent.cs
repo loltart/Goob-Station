@@ -2,9 +2,6 @@
 // SPDX-FileCopyrightText: 2023 deltanedas <@deltanedas:kde.org>
 // SPDX-FileCopyrightText: 2024 Piras314 <p1r4s@proton.me>
 // SPDX-FileCopyrightText: 2025 Aiden <28298836+Aidenkrz@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2025 GoobBot <uristmchands@proton.me>
-// SPDX-FileCopyrightText: 2025 Misandry <mary@thughunt.ing>
-// SPDX-FileCopyrightText: 2025 loltart <lo1tartyt@gmail.com>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -22,7 +19,7 @@ public sealed partial class NotJobRequirementComponent : Component
     /// ID of the job to ban from having this objective.
     /// </summary>
     [DataField(required: true, customTypeSerializer: typeof(PrototypeIdSerializer<JobPrototype>))]
-    public List<string> Job = new();
+    public string Job = string.Empty;
 
     // MisandryBox/JobObjectives - Double negative to not break compatibility
     [DataField]

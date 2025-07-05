@@ -5,15 +5,11 @@
 // SPDX-FileCopyrightText: 2024 username <113782077+whateverusername0@users.noreply.github.com>
 // SPDX-FileCopyrightText: 2024 whateverusername0 <whateveremail>
 // SPDX-FileCopyrightText: 2025 Aiden <28298836+Aidenkrz@users.noreply.github.com>
-// SPDX-FileCopyrightText: 2025 GoobBot <uristmchands@proton.me>
-// SPDX-FileCopyrightText: 2025 Misandry <mary@thughunt.ing>
-// SPDX-FileCopyrightText: 2025 loltart <lo1tartyt@gmail.com>
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using Content.Shared.Objectives.Components;
 using Content.Shared.Roles.Jobs;
-using System.Linq;
 
 namespace Content.Server.Objectives.Systems;
 
@@ -43,7 +39,7 @@ public sealed class NotJobRequirementSystem : EntitySystem
 
 
         // MisandryBox - JobObjectives
-        var hasJob = comp.Job.Contains(proto.ID);
+        var hasJob = proto.ID == comp.Job;
 
         if (comp.Inverted ? !hasJob : hasJob)
             args.Cancelled = true;

@@ -145,11 +145,7 @@
   name: Die a glorious death
   description: Die.
   components:
-  - type: NotJobRequirement
-    job:
-      - ChiefEngineer
-      - QuarterMaster
-      - ResearchDirector # Goobstation
+  - type: NotCommandRequirement # Goobstation
   - type: Objective
     difficulty: 0.5
     icon:
@@ -182,11 +178,7 @@
   id: KillRandomPersonObjective
   description: Do it however you like, just make sure they don't get off the station.
   components:
-  - type: NotJobRequirement
-    job:
-      - ChiefEngineer
-      - QuarterMaster
-      - ResearchDirector # Goobstation
+  - type: NotCommandRequirement # Goobstation
   - type: Objective
     difficulty: 1.75
     unique: false
@@ -222,11 +214,7 @@
   id: RandomTraitorAliveObjective
   description: Identify yourself at your own risk. We just need them alive.
   components:
-  - type: NotJobRequirement
-    job:
-      - ChiefEngineer
-      - QuarterMaster
-      - ResearchDirector # Goobstation
+  - type: NotCommandRequirement # Goobstation
   - type: Objective
     difficulty: 1.75
   - type: TargetObjective
@@ -238,11 +226,7 @@
   id: RandomTraitorProgressObjective
   description: Identify yourself at your own risk. We just need them to succeed.
   components:
-  - type: NotJobRequirement
-    job:
-      - ChiefEngineer
-      - QuarterMaster
-      - ResearchDirector # Goobstation
+  - type: NotCommandRequirement # Goobstation
   - type: Objective
     difficulty: 2.5
   - type: TargetObjective
