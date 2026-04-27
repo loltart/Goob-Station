@@ -22807,3 +22807,9 @@ Entries:
       message: New set of IPC wings.
   id: 2610
   time: '2026-04-26T11:47:18.0000000+00:00'
+- author: DeusMaldPr
+  changes:
+    - type: Add
+      message: Added a new xeno nest lavaland ruin.
+  id: 2611
+  time: '2026-04-27T16:05:33.0000000+00:00'
