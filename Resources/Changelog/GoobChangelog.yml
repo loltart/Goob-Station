@@ -22813,3 +22813,9 @@ Entries:
       message: Added a new xeno nest lavaland ruin.
   id: 2611
   time: '2026-04-27T16:05:33.0000000+00:00'
+- author: Beanyboi69
+  changes:
+    - type: Tweak
+      message: Actually made pirates rarer.
+  id: 2612
+  time: '2026-04-28T08:25:45.0000000+00:00'
