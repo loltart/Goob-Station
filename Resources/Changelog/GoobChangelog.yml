@@ -22833,3 +22833,9 @@ Entries:
         while inside the projector.
   id: 2613
   time: '2026-04-28T08:35:11.0000000+00:00'
+- author: DeusMaldPr
+  changes:
+    - type: Fix
+      message: Ballistic shield has an inhand sprite now
+  id: 2614
+  time: '2026-04-28T09:00:03.0000000+00:00'
