@@ -253,6 +253,8 @@
           bounds: "-0.4,-0.4,0.4,0.29"
         density: 600
   - type: GangCrate
+  - type: EntityStorage
+    capacity: 60
   - type: StorageFill
     contents:
     # Legendary tier
@@ -367,6 +369,7 @@
     damageModifierSet: GangCrate
   - type: GangDuffelBag
   - type: EntityStorage
+    capacity: 60
     openSound:
       path: /Audio/Items/zip.ogg
     closeSound:
