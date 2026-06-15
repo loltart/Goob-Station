@@ -107,7 +107,7 @@
   cost:
     GangPoint: 0
   conditions:
-  - !type:ListingLimitedStockCondition
+  - !type:ListingLimitedStockPerBuyerCondition
     stock: 1
 
 - type: listing
@@ -115,6 +115,16 @@
   name: gang-store-listing-propaint-name
   description: gang-store-listing-propaint-desc
   productEntity: GangSprayCan
+  categories:
+  - GangStoreEquipment
+  cost:
+    GangPoint: 300
+
+- type: listing
+  id: GangStoreClothesBundle
+  name: gang-store-listing-clothes-bundle-name
+  description: gang-store-listing-clothes-bundle-desc
+  productEntity: GangClothesBundle
   categories:
   - GangStoreEquipment
   cost:

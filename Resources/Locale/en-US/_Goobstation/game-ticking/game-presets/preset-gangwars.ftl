@@ -55,6 +55,7 @@ gang-spray-can-charges-remaining = {$charges ->
 }
 
 gang-store-title = Gang Store
+gang-store-in-use = Someone else is already using the locker!
 
 store-currency-display-gangpoint = Gang Points
 
@@ -89,6 +90,9 @@ gang-store-listing-baseballbat-desc = A classic street weapon. Swing for the fac
 
 gang-store-listing-propaint-name = Spray Paint
 gang-store-listing-propaint-desc = A can of gang spray paint. Use it to claim territory for your crew.
+
+gang-store-listing-clothes-bundle-name = Gang Clothes Bundle
+gang-store-listing-clothes-bundle-desc = A spare set of gang threads: shoes, jumpsuit, jacket, and a flashy top hat. Rep your colors to earn territory perks.
 
 gangwar-crate-drop-announcement = Word just came in a gang crate dropped near {$location}. It's got some extra valuable goodies. Every gang on the station wants it. Go get it.
 gangwar-duffelbag-drop-announcement = Word just came in a duffel bag hit the floor near {$location}. Every gang on the station wants it. Go get it.

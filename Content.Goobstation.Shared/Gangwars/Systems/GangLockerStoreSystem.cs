@@ -2,6 +2,7 @@ using System.Linq;
 using Content.Goobstation.Shared.Gangwars.Components;
 using Content.Shared.Examine;
 using Content.Shared.Interaction;
+using Content.Shared.Popups;
 using Content.Shared.Store;
 using Content.Shared.Store.Components;
 using Robust.Shared.Network;
@@ -19,6 +20,7 @@ public sealed class GangLockerStoreSystem : EntitySystem
     [Dependency] private readonly IGameTiming _timing = default!;
     [Dependency] private readonly INetManager _netManager = default!;
     [Dependency] private readonly GangHiddenStructureSystem _hidden = default!;
+    [Dependency] private readonly SharedPopupSystem _popup = default!;
 
     public static readonly ProtoId<CurrencyPrototype> GangPointCurrency = "GangPoint";
 
@@ -97,13 +99,28 @@ public sealed class GangLockerStoreSystem : EntitySystem
             || TryComp<GangHiddenStructureComponent>(locker, out var hidden) && hidden.IsHidden)
             return;
 
-        storeComp.Balance[GangPointCurrency] = memberComp.GangPoints;
-        locker.Comp.CurrentStoreUser = args.User;
-        Dirty(locker);
+        args.Handled = true;
+
+        var alreadyOpenForUser = _ui.IsUiOpen(locker.Owner, StoreUiKey.Key, args.User);
+
+        if (!alreadyOpenForUser
+            && locker.Comp.CurrentStoreUser is { } currentUser
+            && currentUser != args.User)
+        {
+            _popup.PopupClient(Loc.GetString("gang-store-in-use"), locker.Owner, args.User);
+            return;
+        }
+
+        if (!alreadyOpenForUser)
+        {
+            storeComp.Balance[GangPointCurrency] = memberComp.GangPoints;
+            locker.Comp.CurrentStoreUser = args.User;
+            Dirty(locker);
+        }
+
         _hidden.KeepRevealed(locker.Owner);
 
         _ui.TryToggleUi(locker.Owner, StoreUiKey.Key, args.User);
-        args.Handled = true;
     }
 
     private void OnStoreClosed(Entity<GangLockerComponent> locker, ref BoundUIClosedEvent args)

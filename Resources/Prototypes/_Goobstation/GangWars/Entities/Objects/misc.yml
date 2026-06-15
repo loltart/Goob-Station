@@ -44,6 +44,31 @@
       orGroup: GangTophat
 
 - type: entity
+  id: GangClothesBundle
+  name: gang clothes bundle
+  suffix: Gang
+  description: A duffel bag containing a fresh set of gang threads. Rep your colors.
+  parent: ClothingBackpackDuffel
+  components:
+  - type: StorageFill
+    contents:
+    - id: ClothingShoesGangDameDane
+    - id: ClothingOuterGangDameDane
+    - id: ClothingUniformGangDameDane
+    - id: ClothingNeckGangTophat1
+      orGroup: GangTophat
+    - id: ClothingNeckGangTophat2
+      orGroup: GangTophat
+    - id: ClothingNeckGangTophat3
+      orGroup: GangTophat
+    - id: ClothingNeckGangTophat4
+      orGroup: GangTophat
+    - id: ClothingNeckGangTophat5
+      orGroup: GangTophat
+    - id: ClothingNeckGangTophat6
+      orGroup: GangTophat
+
+- type: entity
   id: GangGL06Bundle
   parent: ClothingBackpackSatchel
   name: GL-06 RGL kit
