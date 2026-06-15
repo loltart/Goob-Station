@@ -88,12 +88,10 @@
   description: A covert device that fakes AI 'open' signals to unlock unbolted doors. Comes charged for 5 uses.
   components:
   - type: Quickhack
-    closeDelay: 5
   - type: UseDelay
     delay: 1
   - type: LimitedCharges
     maxCharges: 5
-    charges: 5
   - type: Sprite
     sprite: _Goobstation/Gangs/quickhack.rsi
     state: icon
