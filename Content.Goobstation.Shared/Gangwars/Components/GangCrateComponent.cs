@@ -49,6 +49,7 @@ public sealed partial class GangCrateComponent : Component
     public SoundSpecifier BlinkSound = new SoundPathSpecifier("/Audio/Effects/beep_landmine.ogg",
         AudioParams.Default.WithLoop(true).WithMaxDistance(5f));
 
+    [DataField]
     public SoundSpecifier ReadySound = new SoundPathSpecifier("/Audio/_Goobstation/Effects/ding.ogg",
         AudioParams.Default.WithMaxDistance(10f));
 

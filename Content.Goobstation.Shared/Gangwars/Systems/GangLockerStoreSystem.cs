@@ -1,5 +1,6 @@
 using System.Linq;
 using Content.Goobstation.Shared.Gangwars.Components;
+using Content.Goobstation.Shared.ManifestListings;
 using Content.Shared.Examine;
 using Content.Shared.Interaction;
 using Content.Shared.Popups;
@@ -32,6 +33,7 @@ public sealed class GangLockerStoreSystem : EntitySystem
         SubscribeLocalEvent<GangLockerComponent, BoundUIOpenedEvent>(OnStoreOpened);
         SubscribeLocalEvent<GangLockerComponent, BoundUIClosedEvent>(OnStoreClosed);
         SubscribeLocalEvent<GangLockerComponent, ExaminedEvent>(OnExamined);
+        SubscribeLocalEvent<GangLockerComponent, ListingPurchasedEvent>(OnPurchase);
     }
 
     public override void Update(float frameTime)
@@ -128,16 +130,18 @@ public sealed class GangLockerStoreSystem : EntitySystem
         if (locker.Comp.CurrentStoreUser == null)
             return;
 
-        if (TryComp<StoreComponent>(locker, out var store)
-            && TryComp<GangMemberComponent>(locker.Comp.CurrentStoreUser.Value, out var member)
-            && store.Balance.TryGetValue(GangPointCurrency, out var remaining))
-        {
-            member.GangPoints = (int) remaining;
-            Dirty(locker.Comp.CurrentStoreUser.Value, member);
-        }
-
         locker.Comp.CurrentStoreUser = null;
         Dirty(locker);
         _hidden.KeepRevealed(locker.Owner);
+    }
+
+    private void OnPurchase(Entity<GangLockerComponent> locker, ref ListingPurchasedEvent args)
+    {
+        if (!TryComp<GangMemberComponent>(args.User, out var member)
+            || !args.Data.Cost.TryGetValue(GangPointCurrency, out var cost))
+            return;
+
+        member.GangPoints -= (int) cost;
+        Dirty(args.User, member);
     }
 }

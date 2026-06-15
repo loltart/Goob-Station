@@ -10,6 +10,7 @@ using Robust.Shared.Containers;
 using Robust.Shared.Map;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
+using Robust.Shared.Prototypes;
 
 namespace Content.Goobstation.Shared.Gangwars.Systems;
 
@@ -24,6 +25,9 @@ public sealed class GangLeaderSystem : EntitySystem
     [Dependency] private readonly TriggerSystem _trigger = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
     [Dependency] private readonly SharedRoleSystem _role = default!;
+
+    private static readonly EntProtoId DropPodSpawner = "DropPodspawner";
+    private static readonly EntProtoId GangMemberMindRole = "MindRoleGangMember";
 
     public override void Initialize()
     {
@@ -178,7 +182,7 @@ public sealed class GangLeaderSystem : EntitySystem
 
         _xform.Unanchor(locker);
 
-        var pod = Spawn("DropPodspawner", coords);
+        var pod = Spawn(DropPodSpawner, coords);
 
         if (_containers.TryGetContainer(pod, "clowncar_container", out var container)) // I don't know why drop pods use clowncar_container. It's just the magic of goobcode
             _containers.Insert(locker, container);
@@ -242,7 +246,8 @@ public sealed class GangLeaderSystem : EntitySystem
             return;
         }
 
-        AcceptGangInvite((leaderUid, leaderComp), responder.Value, ev.GangColor, ev.GangName);
+        if (TryComp<GangMemberComponent>(leaderUid, out var leaderMember) && leaderMember.Gang != null)
+            AcceptGangInvite((leaderUid, leaderComp), responder.Value, leaderMember.Gang.Value, leaderMember.GangName ?? string.Empty);
 
         leaderComp.PendingInviteTarget = null;
         Dirty(leaderUid, leaderComp);
@@ -261,7 +266,7 @@ public sealed class GangLeaderSystem : EntitySystem
         Dirty(leader);
 
         if (_mind.TryGetMind(recruit, out var mindId, out _))
-            _role.MindAddRole(mindId, "MindRoleGangMember", null, true);
+            _role.MindAddRole(mindId, GangMemberMindRole, null, true);
 
         RaiseLocalEvent(recruit, new GangMemberRecruitedEvent());
 

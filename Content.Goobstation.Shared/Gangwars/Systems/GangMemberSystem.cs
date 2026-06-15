@@ -6,6 +6,7 @@ using Content.Shared.Body.Systems;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Events;
 using Content.Shared.Inventory.Events;
+using Robust.Shared.Network;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 
@@ -24,6 +25,7 @@ public sealed class GangMemberSystem : EntitySystem
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly SharedBloodstreamSystem _bloodstream = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
+    [Dependency] private readonly INetManager _net = default!;
     [Dependency] private readonly SharedActionsSystem _actions = default!;
     [Dependency] private readonly GangwarRuleSystem _gangwarRule = default!;
 
@@ -120,7 +122,7 @@ public sealed class GangMemberSystem : EntitySystem
 
             _damageable.TryChangeDamage(uid, healSpec, ignoreResistances: true);
 
-            if (_random.Prob(memberComp.BleedReductionChance))
+            if (_net.IsServer && _random.Prob(memberComp.BleedReductionChance))
                 _bloodstream.TryModifyBleedAmount(uid, memberComp.BleedReductionAmount);
 
             var severity = inBuffedTerritory

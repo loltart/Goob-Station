@@ -7,8 +7,6 @@ public sealed class ClientGangLeaderSystem : EntitySystem
     private GangCreatorWindow? _colorPickerWindow;
     private GangInviteWindow? _inviteWindow;
     private NetEntity _pendingInviteLeader;
-    private Color _pendingInviteGangColor;
-    private string _pendingInviteGangName = string.Empty;
 
     public override void Initialize()
     {
@@ -24,7 +22,7 @@ public sealed class ClientGangLeaderSystem : EntitySystem
 
         if (_inviteWindow is { Disposed: false } window && window.TryTimedOut())
         {
-            RaiseNetworkEvent(new GangInviteResponseEvent(false, _pendingInviteLeader, _pendingInviteGangColor, _pendingInviteGangName));
+            RaiseNetworkEvent(new GangInviteResponseEvent(false, _pendingInviteLeader));
             _inviteWindow.Close();
         }
     }
@@ -49,18 +47,16 @@ public sealed class ClientGangLeaderSystem : EntitySystem
     {
         _inviteWindow?.Close();
         _pendingInviteLeader = args.LeaderEntity;
-        _pendingInviteGangColor = args.GangColor;
-        _pendingInviteGangName = args.GangName;
 
         _inviteWindow = new GangInviteWindow(args.LeaderName, args.GangColor, args.GangName);
         _inviteWindow.OnAccepted += () =>
         {
-            RaiseNetworkEvent(new GangInviteResponseEvent(true, _pendingInviteLeader, _pendingInviteGangColor, _pendingInviteGangName));
+            RaiseNetworkEvent(new GangInviteResponseEvent(true, _pendingInviteLeader));
             _inviteWindow?.Close();
         };
         _inviteWindow.OnDenied += () =>
         {
-            RaiseNetworkEvent(new GangInviteResponseEvent(false, _pendingInviteLeader, _pendingInviteGangColor, _pendingInviteGangName));
+            RaiseNetworkEvent(new GangInviteResponseEvent(false, _pendingInviteLeader));
             _inviteWindow?.Close();
         };
         _inviteWindow.OpenCentered();

@@ -105,8 +105,10 @@ gang-store-listing-light-armor-vest-desc = A standard Type I armored vest. Not f
 gang-crate-no-locker-nearby = You need to be near a gang locker to open this!
 gang-crate-reward-popup = Your gang secured the crate! +{$points} gang points!
 
-gang-duffel-bag-trap-triggered = You cut your hand on the bag's trap!
+gang-duffel-bag-untrapped = You cut your hand on the bag's trap!
 gang-duffel-bag-untrapping = You begin disarming the trap..
+alerts-gang-trapped-name = Trapped!
+alerts-gang-trapped-desc = The duffelbag was trapped! You're now slowed.
 
 gang-store-listing-encryption-key-name = Gang Encryption Key
 gang-store-listing-encryption-key-desc = An encryption key tuned to a special frequency used by gangs.

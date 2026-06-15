@@ -74,12 +74,10 @@ public sealed class GangInviteOfferEvent(string leaderName, Color gangColor, Net
 /// Sent by the invited client back to the server with their accept/deny choice.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class GangInviteResponseEvent(bool accepted, NetEntity leaderEntity, Color gangColor, string gangName) : EntityEventArgs
+public sealed class GangInviteResponseEvent(bool accepted, NetEntity leaderEntity) : EntityEventArgs
 {
     public bool Accepted { get; } = accepted;
     public NetEntity LeaderEntity { get; } = leaderEntity;
-    public Color GangColor { get; } = gangColor;
-    public string GangName { get; } = gangName;
 }
 
 public sealed class GangMemberRecruitedEvent : EntityEventArgs;

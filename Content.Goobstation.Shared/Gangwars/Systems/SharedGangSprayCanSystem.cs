@@ -102,7 +102,7 @@ public sealed class SharedGangSprayCanSystem : EntitySystem
             Dirty(ent);
 
             _audio.PlayPredicted(ent.Comp.UseSound, ent.Owner, user);
-            _popup.PopupClient(Loc.GetString("gang-clothing-painted"), user);
+            _popup.PopupClient(Loc.GetString("gang-spray-can-clothing-painted"), user);
             return;
         }
 
