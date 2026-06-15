@@ -87,5 +87,5 @@ public sealed class GangMemberRecruitedEvent : EntityEventArgs;
 [Serializable, NetSerializable]
 public sealed partial class GangDuffelBagUntrapDoAfterEvent : SimpleDoAfterEvent;
 
-[Serializable, NetSerializable]
+[DataDefinition]
 public sealed partial class GangTipOffEvent : EntityEventArgs;
