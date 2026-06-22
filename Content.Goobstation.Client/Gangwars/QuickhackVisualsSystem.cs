@@ -19,6 +19,6 @@ public sealed class QuickhackVisualsSystem : EntitySystem
         if (!TryComp<SpriteComponent>(uid, out var sprite))
             return;
 
-        _sprite.LayerSetRsiState((uid, sprite), 0, comp.Firing ? "fire" : "icon");
+        _sprite.LayerSetRsiState((uid, sprite), 0, comp.State == QuickhackState.Firing ? "fire" : "icon");
     }
 }

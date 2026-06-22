@@ -255,99 +255,104 @@
   - type: GangCrate
   - type: EntityStorage
     capacity: 60
-  - type: StorageFill
-    contents:
-    # Legendary tier
-    # PlushieMoth entry holds 80% = 20% chance one legendary item spawns.
-    - id: PlushieMoth
-      prob: 0.80
-      orGroup: LegendaryItem
-    - id: WeaponLauncherRocketDisposableThermobaric
-      prob: 0.02
-      orGroup: LegendaryItem
-    - id: WeaponShotgunHeavy
-      prob: 0.02
-      orGroup: LegendaryItem
-    - id: StorageImplant
-      prob: 0.04
-      orGroup: LegendaryItem
-    - id: AutosurgeonSandevistan
-      prob: 0.04
-      orGroup: LegendaryItem
-    - id: WeaponSniperHristov
-      prob: 0.04
-      orGroup: LegendaryItem
-    - id: SpaceCash30000
-      prob: 1.0
-      orGroup: LegendaryItem
-      amount: 2
-    # Rare tier
-    - id: CapoeiraManual
-      prob: 0.05
-    - id: KravMagaImplanter
-      prob: 0.05
-    - id: Omnitool
-      prob: 0.05
-    - id: WeaponSubMachineGunDrozd
-      prob: 0.15
-    - id: WeaponLaserGun
-      prob: 0.1
-    - id: WeaponLaserSvalinn
-      prob: 0.1
-      amount: 2
-    - id: PowerCellHyper
-      prob: 0.2
-    - id: WeaponRevolverPython
-      prob: 0.1
-    - id: CigarGoldenGang
-      prob: 0.15
-    - id: FlippoEngravedLighter
-      prob: 0.2
-    - id: FireAxe
-      prob: 0.3
-    - id: WeaponSniperMosin
-      prob: 0.3
-      amount: 2
-    - id: FreedomImplanter
-      prob: 0.3
-    - id: ClothingHandsKnuckleDusters
-      prob: 0.3
-    - id: WeaponPistolMk58
-      prob: 0.3
-      amount: 2
-    - id: WeaponShotgunSawn
-      prob: 0.3
-    - id: Stunbaton
-      prob: 0.3
-    - id: MedkitAdvancedFilled
-      prob: 0.3
-    - id: ClothingOuterVestWebMerc
-      prob: 0.3
-    - id: SpaceCash5000
-      prob: 0.3
-    # Common tier
-    - id: GangMachete
-      prob: 0.5
-    - id: ThrowingKnife
-      prob: 0.65
-      amount: 3
-    - id: CombatKnife
-      prob: 0.65
-    - id: GangSprayCan
-      prob: 0.65
-      amount: 3
-    - id: MedkitFilled
-      prob: 0.65
-    - id: SmokeGrenade
-      prob: 0.65
-      amount: 2
-    - id: SpaceCash500
-      prob: 0.65
-    - id: ClothingEyesGlassesSunglasses
-      prob: 0.65
-    - id: Cigar
-      prob: 0.65
-      amount: 2
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:AllSelector
+        children:
+        # Legendary tier
+        # PlushieMoth entry holds 80% = 20% chance one legendary item spawns.
+        - !type:GroupSelector
+          children:
+          - id: PlushieMoth
+            weight: 0.80
+          - id: WeaponLauncherRocketDisposableThermobaric
+            weight: 0.02
+          - id: WeaponShotgunHeavy
+            weight: 0.02
+          - id: StorageImplant
+            weight: 0.04
+          - id: AutosurgeonSandevistan
+            weight: 0.04
+          - id: WeaponSniperHristov
+            weight: 0.04
+          - id: SpaceCash30000
+            weight: 0.08
+            amount: !type:ConstantNumberSelector
+              value: 2
+        # Rare tier
+        - id: CapoeiraManual
+          prob: 0.05
+        - id: KravMagaImplanter
+          prob: 0.05
+        - id: Omnitool
+          prob: 0.05
+        - id: WeaponSubMachineGunDrozd
+          prob: 0.15
+        - id: WeaponLaserGun
+          prob: 0.1
+        - id: WeaponLaserSvalinn
+          prob: 0.1
+          amount: !type:ConstantNumberSelector
+            value: 2
+        - id: PowerCellHyper
+          prob: 0.2
+        - id: WeaponRevolverPython
+          prob: 0.1
+        - id: CigarGoldenGang
+          prob: 0.15
+        - id: FlippoEngravedLighter
+          prob: 0.2
+        - id: FireAxe
+          prob: 0.3
+        - id: WeaponSniperMosin
+          prob: 0.3
+          amount: !type:ConstantNumberSelector
+            value: 2
+        - id: FreedomImplanter
+          prob: 0.3
+        - id: ClothingHandsKnuckleDusters
+          prob: 0.3
+        - id: WeaponPistolMk58
+          prob: 0.3
+          amount: !type:ConstantNumberSelector
+            value: 2
+        - id: WeaponShotgunSawn
+          prob: 0.3
+        - id: Stunbaton
+          prob: 0.3
+        - id: MedkitAdvancedFilled
+          prob: 0.3
+        - id: ClothingOuterVestWebMerc
+          prob: 0.3
+        - id: SpaceCash5000
+          prob: 0.3
+        # Common tier
+        - id: GangMachete
+          prob: 0.5
+        - id: ThrowingKnife
+          prob: 0.65
+          amount: !type:ConstantNumberSelector
+            value: 3
+        - id: CombatKnife
+          prob: 0.65
+        - id: GangSprayCan
+          prob: 0.65
+          amount: !type:ConstantNumberSelector
+            value: 3
+        - id: MedkitFilled
+          prob: 0.65
+        - id: SmokeGrenade
+          prob: 0.65
+          amount: !type:ConstantNumberSelector
+            value: 2
+        - id: SpaceCash500
+          prob: 0.65
+        - id: ClothingEyesGlassesSunglasses
+          prob: 0.65
+        - id: Cigar
+          prob: 0.65
+          amount: !type:ConstantNumberSelector
+            value: 2
 
 - type: entity # Functions as a more common version of the crate. Odds are way lower for everything.
   id: GangDuffelBag
@@ -374,93 +379,93 @@
       path: /Audio/Items/zip.ogg
     closeSound:
       path: /Audio/Items/zip.ogg
-  - type: StorageFill
-    contents:
-    # Legendary tier
-    # PlushieMoth entry holds 95% = 5% chance one legendary item spawns.
-    - id: PlushieMoth
-      prob: 0.95
-      orGroup: LegendaryItem
-    - id: StorageImplant
-      prob: 0.01
-      orGroup: LegendaryItem
-    - id: AutosurgeonSandevistan
-      prob: 0.01
-      orGroup: LegendaryItem
-    - id: WeaponShotgunHeavy
-      prob: 0.01
-      orGroup: LegendaryItem
-    - id: WeaponSniperHristov
-      prob: 0.01
-      orGroup: LegendaryItem
-    - id: SpaceCash30000
-      prob: 1.0
-      orGroup: LegendaryItem
-      amount: 2
-    # Rare tier
-    - id: GangGL06Bundle
-      prob: 0.02
-    - id: CapoeiraManual
-      prob: 0.02
-    - id: KravMagaImplanter
-      prob: 0.02
-    - id: Omnitool
-      prob: 0.02
-    - id: WeaponSubMachineGunDrozd
-      prob: 0.05
-    - id: WeaponLaserGun
-      prob: 0.03
-    - id: WeaponLaserSvalinn
-      prob: 0.03
-    - id: PowerCellHyper
-      prob: 0.07
-    - id: WeaponRevolverPython
-      prob: 0.03
-    - id: CigarGoldenGang
-      prob: 0.05
-    - id: FlippoEngravedLighter
-      prob: 0.07
-    - id: FireAxe
-      prob: 0.10
-    - id: WeaponSniperMosin
-      prob: 0.10
-    - id: FreedomImplanter
-      prob: 0.10
-    - id: ClothingHandsKnuckleDusters
-      prob: 0.10
-    - id: WeaponPistolMk58
-      prob: 0.10
-    - id: WeaponShotgunSawn
-      prob: 0.10
-    - id: GangMachete
-      prob: 0.10
-    - id: Stunbaton
-      prob: 0.10
-    - id: MedkitAdvancedFilled
-      prob: 0.10
-    - id: ClothingOuterVestWebMerc
-      prob: 0.10
-    - id: SpaceCash5000
-      prob: 0.10
-    # Common tier
-    - id: ThrowingKnife
-      prob: 0.25
-      amount: 2
-    - id: CombatKnife
-      prob: 0.25
-    - id: GangSprayCan
-      prob: 0.5
-      amount: 2
-    - id: GrenadeEMP
-      prob: 0.25
-    - id: SpaceCash500
-      prob: 0.25
-    - id: ClothingEyesGlassesSunglasses
-      prob: 0.25
-    - id: Cigar
-      prob: 0.25
-      amount: 1
-    - id: MedkitFilled
-      prob: 0.5
-    - id: SmokeGrenade
-      prob: 0.5
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:AllSelector
+        children:
+        # Legendary tier
+        # PlushieMoth entry holds 95% = 5% chance one legendary item spawns.
+        - !type:GroupSelector
+          children:
+          - id: PlushieMoth
+            weight: 0.95
+          - id: StorageImplant
+            weight: 0.01
+          - id: AutosurgeonSandevistan
+            weight: 0.01
+          - id: WeaponShotgunHeavy
+            weight: 0.01
+          - id: WeaponSniperHristov
+            weight: 0.01
+          - id: SpaceCash30000
+            weight: 1.0
+            amount: !type:ConstantNumberSelector
+              value: 2
+        # Rare tier
+        - id: GangGL06Bundle
+          prob: 0.02
+        - id: CapoeiraManual
+          prob: 0.02
+        - id: KravMagaImplanter
+          prob: 0.02
+        - id: Omnitool
+          prob: 0.02
+        - id: WeaponSubMachineGunDrozd
+          prob: 0.05
+        - id: WeaponLaserGun
+          prob: 0.03
+        - id: WeaponLaserSvalinn
+          prob: 0.03
+        - id: PowerCellHyper
+          prob: 0.07
+        - id: WeaponRevolverPython
+          prob: 0.03
+        - id: CigarGoldenGang
+          prob: 0.05
+        - id: FlippoEngravedLighter
+          prob: 0.07
+        - id: FireAxe
+          prob: 0.10
+        - id: WeaponSniperMosin
+          prob: 0.10
+        - id: FreedomImplanter
+          prob: 0.10
+        - id: ClothingHandsKnuckleDusters
+          prob: 0.10
+        - id: WeaponPistolMk58
+          prob: 0.10
+        - id: WeaponShotgunSawn
+          prob: 0.10
+        - id: GangMachete
+          prob: 0.10
+        - id: Stunbaton
+          prob: 0.10
+        - id: MedkitAdvancedFilled
+          prob: 0.10
+        - id: ClothingOuterVestWebMerc
+          prob: 0.10
+        - id: SpaceCash5000
+          prob: 0.10
+        # Common tier
+        - id: ThrowingKnife
+          prob: 0.25
+          amount: !type:ConstantNumberSelector
+            value: 2
+        - id: CombatKnife
+          prob: 0.25
+        - id: GangSprayCan
+          prob: 0.5
+          amount: !type:ConstantNumberSelector
+            value: 2
+        - id: GrenadeEMP
+          prob: 0.25
+        - id: SpaceCash500
+          prob: 0.25
+        - id: ClothingEyesGlassesSunglasses
+          prob: 0.25
+        - id: Cigar
+          prob: 0.25
+        - id: MedkitFilled
+          prob: 0.5
+        - id: SmokeGrenade
+          prob: 0.5

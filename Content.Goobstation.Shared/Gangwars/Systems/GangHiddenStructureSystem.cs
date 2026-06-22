@@ -1,4 +1,5 @@
 using Content.Goobstation.Shared.Gangwars.Components;
+using Content.Shared.Examine;
 using Content.Shared.Interaction;
 using Content.Shared.Popups;
 using Content.Shared.Tag;
@@ -9,8 +10,7 @@ using Robust.Shared.Timing;
 namespace Content.Goobstation.Shared.Gangwars.Systems;
 
 /// <summary>
-/// Hides a gang structure under the floor after a period of inactivity and reveals it again when a
-/// same-gang member interacts with it.
+/// Stealths the structure without overriding the color and allows gang members to reveal it.
 /// </summary>
 public sealed class GangHiddenStructureSystem : EntitySystem
 {
@@ -27,6 +27,13 @@ public sealed class GangHiddenStructureSystem : EntitySystem
 
         SubscribeLocalEvent<GangHiddenStructureComponent, MapInitEvent>(OnMapInit);
         SubscribeLocalEvent<GangHiddenStructureComponent, InteractHandEvent>(OnInteractHand);
+        SubscribeLocalEvent<GangHiddenStructureComponent, ExamineAttemptEvent>(OnExamineAttempt);
+    }
+
+    private void OnExamineAttempt(Entity<GangHiddenStructureComponent> ent, ref ExamineAttemptEvent args)
+    {
+        if (ent.Comp.IsHidden)
+            args.Cancel();
     }
 
     private void OnMapInit(Entity<GangHiddenStructureComponent> ent, ref MapInitEvent args)

@@ -42,6 +42,7 @@ gang-creator-name-too-long = Name must be at most {$max} characters.
 gang-creator-name-already-taken = That gang name is already taken!
 
 gang-territory-too-close = You're too close to an existing territory!
+gang-locker-too-close-to-crate = You're too close to an existing gang crate!
 gang-color-already-taken = This color was already picked!
 
 gang-spray-can-verb-paint = Spray Paint

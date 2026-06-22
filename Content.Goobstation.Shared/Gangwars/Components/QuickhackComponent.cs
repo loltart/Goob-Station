@@ -1,5 +1,6 @@
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
+using Robust.Shared.Serialization;
 
 namespace Content.Goobstation.Shared.Gangwars.Components;
 
@@ -19,8 +20,18 @@ public sealed partial class QuickhackComponent : Component
     public TimeSpan ShootAnimation = TimeSpan.FromSeconds(1.12);
 
     [DataField, AutoNetworkedField]
-    public bool Firing;
+    public QuickhackState State;
 
     [DataField, AutoNetworkedField]
     public TimeSpan? FiringResetAt;
+
+    [DataField, AutoNetworkedField]
+    public EntityUid? FiringTarget;
+}
+
+[Serializable, NetSerializable]
+public enum QuickhackState : byte
+{
+    Idle,
+    Firing,
 }

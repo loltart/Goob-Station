@@ -4,6 +4,7 @@ using Content.Goobstation.Shared.Gangwars.Events;
 using Content.Server._DV.CartridgeLoader.Cartridges;
 using Content.Server.GameTicking.Rules;
 using Content.Shared.Access.Components;
+using Content.Shared.CartridgeLoader;
 using Content.Shared.PDA;
 using Content.Server.Pinpointer;
 using Content.Server.Radio.Components;
@@ -175,12 +176,14 @@ public sealed class ServerGangwarRuleSystem : GameRuleSystem<GangwarRuleComponen
             if (!card.ListNumber
                 || card.Number == null
                 || card.PdaUid == null
-                || !TryComp<PdaComponent>(card.PdaUid.Value, out var pda))
+                || !TryComp<PdaComponent>(card.PdaUid.Value, out var pda)
+                || !PdaHasNanoChat(card.PdaUid.Value))
                 continue;
 
             var owner = pda.PdaOwner;
             if (owner == null
-                || HasComp<GangMemberComponent>(owner.Value))
+                || HasComp<GangMemberComponent>(owner.Value)
+                || !HasComp<ActorComponent>(owner.Value))
                 continue;
 
             candidates.Add((cardUid, card));
@@ -196,6 +199,18 @@ public sealed class ServerGangwarRuleSystem : GameRuleSystem<GangwarRuleComponen
             0000,
             Loc.GetString("gangwar-tipoff-nanochat-sender"),
             Loc.GetString("gangwar-tipoff-nanochat-message", ("location", locationName), ("seconds", headstartSeconds)));
+    }
+
+    private bool PdaHasNanoChat(EntityUid pdaUid)
+    {
+        if (!TryComp<CartridgeLoaderComponent>(pdaUid, out var loader))
+            return false;
+
+        foreach (var program in loader.BackgroundPrograms)
+            if (HasComp<NanoChatCartridgeComponent>(program))
+                return true;
+
+        return false;
     }
 }
 

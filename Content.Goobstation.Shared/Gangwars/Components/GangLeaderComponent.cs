@@ -1,5 +1,4 @@
 using Content.Shared.StatusIcon;
-using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -43,8 +42,14 @@ public sealed partial class GangLeaderComponent : Component
     public EntityUid? PendingInviteTarget;
 
     [DataField]
+    public float CrateExclusionZone = 10f;
+
+    [DataField]
     public EntProtoId GangLockerPrototype = "GangLocker";
 
     [DataField, AutoNetworkedField]
     public EntityUid? GangLocker;
+
+    [DataField]
+    public Color? PendingRemakeColor;
 }

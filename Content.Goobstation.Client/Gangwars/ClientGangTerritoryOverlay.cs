@@ -65,7 +65,7 @@ public sealed class GangTerritoryOverlay(IEntityManager entManager) : Overlay
             var localPos = Vector2.Transform(_transform.GetWorldPosition(xform), invWorldMatrix);
             var circle = new Circle(localPos, territoryComp.TerritoryRadius);
 
-            foreach (var tile in _mapSystem.GetLocalTilesIntersecting(gridUid, grid, circle))
+            foreach (var tile in _mapSystem.GetLocalTilesIntersecting(gridUid, grid, circle, ignoreEmpty: true))
                 group.Tiles.Add(tile.GridIndices);
         }
     }
@@ -76,27 +76,41 @@ public sealed class GangTerritoryOverlay(IEntityManager entManager) : Overlay
         {
             handle.SetTransform(worldMatrix);
 
+            var fillColor = color.WithAlpha(0.2f);
             foreach (var tileIndex in tiles)
-                DrawTile(handle, tileIndex, tileSize, tiles, color);
+                handle.DrawRect(TileBox(tileIndex, tileSize), fillColor);
+
+            var outlineColor = Color.Black.WithAlpha(0.7f);
+            var outlineHalf = tileSize * 0.07f;
+            foreach (var tileIndex in tiles)
+                DrawBorders(handle, tileIndex, tileSize, tiles, outlineHalf, outlineColor);
+
+            var borderColor = color.WithAlpha(0.95f);
+            var borderHalf = tileSize * 0.035f;
+            foreach (var tileIndex in tiles)
+                DrawBorders(handle, tileIndex, tileSize, tiles, borderHalf, borderColor);
 
             handle.SetTransform(Matrix3x2.Identity);
         }
     }
 
-    private static void DrawTile(DrawingHandleWorld handle, Vector2i tileIndex, float tileSize, HashSet<Vector2i> tiles, Color color)
+    private static Box2 TileBox(Vector2i tileIndex, float tileSize)
+    {
+        var left = tileIndex.X * tileSize;
+        var bottom = tileIndex.Y * tileSize;
+        return new Box2(left, bottom, left + tileSize, bottom + tileSize);
+    }
+
+    private static void DrawBorders(DrawingHandleWorld handle, Vector2i tileIndex, float tileSize, HashSet<Vector2i> tiles, float half, Color color)
     {
         var left = tileIndex.X * tileSize;
         var bottom = tileIndex.Y * tileSize;
         var right = left + tileSize;
         var top = bottom + tileSize;
 
-        handle.DrawRect(new Box2(left, bottom, right, top), color.WithAlpha(0.12f));
-
-        var borderColor = color.WithAlpha(0.85f);
-
-        if (!tiles.Contains(new Vector2i(tileIndex.X, tileIndex.Y - 1))) handle.DrawLine(new Vector2(left, bottom), new Vector2(right, bottom), borderColor); // bottom
-        if (!tiles.Contains(new Vector2i(tileIndex.X, tileIndex.Y + 1))) handle.DrawLine(new Vector2(left, top),new Vector2(right, top), borderColor); // top
-        if (!tiles.Contains(new Vector2i(tileIndex.X - 1, tileIndex.Y))) handle.DrawLine(new Vector2(left, bottom), new Vector2(left, top), borderColor); // left
-        if (!tiles.Contains(new Vector2i(tileIndex.X + 1, tileIndex.Y))) handle.DrawLine(new Vector2(right, bottom), new Vector2(right, top), borderColor); // right
+        if (!tiles.Contains(new Vector2i(tileIndex.X, tileIndex.Y - 1))) handle.DrawRect(new Box2(left - half, bottom - half, right + half, bottom + half), color); // bottom
+        if (!tiles.Contains(new Vector2i(tileIndex.X, tileIndex.Y + 1))) handle.DrawRect(new Box2(left - half, top - half, right + half, top + half), color); // top
+        if (!tiles.Contains(new Vector2i(tileIndex.X - 1, tileIndex.Y))) handle.DrawRect(new Box2(left - half, bottom - half, left + half, top + half), color); // left
+        if (!tiles.Contains(new Vector2i(tileIndex.X + 1, tileIndex.Y))) handle.DrawRect(new Box2(right - half, bottom - half, right + half, top + half), color); // right
     }
 }

@@ -19,7 +19,7 @@ public sealed class GangCreatorWindow : DefaultWindow
     private const int MinNameLength = 4;
     private const int MaxNameLength = 17;
 
-    public GangCreatorWindow(IReadOnlyDictionary<Color, string> gangNames)
+    public GangCreatorWindow(IReadOnlyDictionary<Color, string> gangNames, Color? initialColor = null, string? initialName = null)
     {
         _gangNames = gangNames;
 
@@ -43,7 +43,7 @@ public sealed class GangCreatorWindow : DefaultWindow
         _colorSelector = new ColorSelectorSliders
         {
             SelectorType = ColorSelectorSliders.ColorSelectorType.Hsv,
-            Color = ClampColor(Color.White),
+            Color = ClampColor(initialColor ?? Color.White),
         };
         vbox.AddChild(_colorSelector);
 
@@ -74,6 +74,7 @@ public sealed class GangCreatorWindow : DefaultWindow
         {
             PlaceHolder = Loc.GetString("gang-creator-name-placeholder"),
             HorizontalExpand = true,
+            Text = initialName ?? string.Empty,
         };
         vbox.AddChild(nameInput);
 
@@ -149,6 +150,8 @@ public sealed class GangCreatorWindow : DefaultWindow
             Close();
         };
         vbox.AddChild(confirmBtn);
+
+        UpdateConfirmState();
 
         Contents.AddChild(vbox);
     }

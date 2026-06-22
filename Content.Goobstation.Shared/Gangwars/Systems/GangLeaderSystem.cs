@@ -1,7 +1,9 @@
 using Content.Goobstation.Shared.Gangwars.Components;
 using Content.Goobstation.Shared.Gangwars.Events;
 using Content.Shared.Actions;
+using Content.Shared.Administration.Logs;
 using Content.Shared.Coordinates.Helpers;
+using Content.Shared.Database;
 using Content.Shared.Mind;
 using Content.Shared.Popups;
 using Content.Shared.Roles;
@@ -25,6 +27,8 @@ public sealed class GangLeaderSystem : EntitySystem
     [Dependency] private readonly TriggerSystem _trigger = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
     [Dependency] private readonly SharedRoleSystem _role = default!;
+    [Dependency] private readonly EntityLookupSystem _lookup = default!;
+    [Dependency] private readonly ISharedAdminLogManager _adminLog = default!;
 
     private static readonly EntProtoId DropPodSpawner = "DropPodspawner";
     private static readonly EntProtoId GangMemberMindRole = "MindRoleGangMember";
@@ -56,16 +60,23 @@ public sealed class GangLeaderSystem : EntitySystem
 
     private void OnSummonLocker(Entity<GangLeaderComponent> ent, ref GangLeaderSummonLockerEvent args)
     {
+        var coords = Transform(ent.Owner).Coordinates.SnapToGrid();
+
+        if (IsNearGangCrate(coords, ent))
+        {
+            _popup.PopupClient(Loc.GetString("gang-locker-too-close-to-crate"), ent.Owner, ent.Owner);
+            return;
+        }
+
         if (_netManager.IsServer
             && ent.Comp.GangLocker == null
             && TryComp<ActorComponent>(ent.Owner, out var actor))
         {
-            TryFindActiveGangwarRule(out _, out var gangwarRule);
+            _gangwarRule.TryGetRule(out _, out var gangwarRule);
             RaiseNetworkEvent(new GangLeaderNeedsColorPickEvent(gangwarRule.GangNames), actor.PlayerSession);
             return;
         }
 
-        var coords = Transform(ent.Owner).Coordinates.SnapToGrid();
         var defaultRadius = new GangTerritoryComponent().TerritoryRadius;
 
         if (!TryComp<GangMemberComponent>(ent.Owner, out var gangMember)
@@ -94,41 +105,57 @@ public sealed class GangLeaderSystem : EntitySystem
         var playerEntity = args.SenderSession.AttachedEntity;
         if (playerEntity == null
             || !TryComp<GangLeaderComponent>(playerEntity, out var leaderComp)
-            || leaderComp.GangLocker != null
             || !TryComp<GangMemberComponent>(playerEntity, out var gangMemberComp))
+            return;
+
+        if (leaderComp.PendingRemakeColor is { } remakeColor)
+        {
+            var remakeName = ev.GangName.Trim();
+            if (!IsValidGangAppearance(ev.ChosenColor, remakeName)
+                || _gangwarRule.IsColorOrNameTakenByOther(remakeColor, ev.ChosenColor, remakeName))
+                return;
+
+            leaderComp.PendingRemakeColor = null;
+            Dirty(playerEntity.Value, leaderComp);
+
+            _gangwarRule.MigrateGang(remakeColor, ev.ChosenColor, remakeName);
+
+            _adminLog.Add(LogType.Action, LogImpact.High,
+                $"{ToPrettyString(playerEntity.Value):player} remade their gang into \"{remakeName}\" with color {ev.ChosenColor.ToHex()}");
+            return;
+        }
+
+        if (leaderComp.GangLocker != null)
             return;
 
         var coords = Transform(playerEntity.Value).Coordinates.SnapToGrid();
         var defaultRadius = new GangTerritoryComponent().TerritoryRadius;
         if (_gangwarRule.IsTerritoryTooClose(_xform.ToMapCoordinates(coords), defaultRadius))
         {
-            _popup.PopupClient(Loc.GetString("gang-territory-too-close"), playerEntity.Value, playerEntity.Value);
+            _popup.PopupEntity(Loc.GetString("gang-territory-too-close"), playerEntity.Value, playerEntity.Value);
+            return;
+        }
+
+        if (IsNearGangCrate(coords, (playerEntity.Value, leaderComp)))
+        {
+            _popup.PopupEntity(Loc.GetString("gang-locker-too-close-to-crate"), playerEntity.Value, playerEntity.Value);
             return;
         }
 
         // And so I said "No modified clients shall ignore my restrictions"
-        var hsv = Color.ToHsv(ev.ChosenColor);
         var gangName = ev.GangName.Trim();
-        if (ev.ChosenColor.A < 0.9f
-            || hsv.Z < 0.70f
-            || gangName.Length < 4
-            || gangName.Length > 17)
+        if (!IsValidGangAppearance(ev.ChosenColor, gangName)
+            || _gangwarRule.IsColorOrNameTakenByOther(null, ev.ChosenColor, gangName))
             return;
 
-
-        if (TryFindActiveGangwarRule(out var gangwarRuleEntity, out var gangwarRule))
+        if (_gangwarRule.TryGetRule(out var gangwarRuleEntity, out var gangwarRule))
         {
-            foreach (var existingGangColor in gangwarRule.GangNames.Keys)
-                if (ColorsAreTooSimilar(ev.ChosenColor, existingGangColor))
-                    return;
-
-            foreach (var existingName in gangwarRule.GangNames.Values)
-                if (string.Equals(existingName, gangName, StringComparison.OrdinalIgnoreCase))
-                    return;
-
             gangwarRule.GangNames[ev.ChosenColor] = gangName;
             Dirty(gangwarRuleEntity, gangwarRule);
         }
+
+        _adminLog.Add(LogType.Action, LogImpact.Medium,
+            $"{ToPrettyString(playerEntity.Value):player} founded the gang \"{gangName}\" with color {ev.ChosenColor.ToHex()}");
 
         gangMemberComp.Gang = ev.ChosenColor;
         gangMemberComp.GangName = gangName;
@@ -275,26 +302,15 @@ public sealed class GangLeaderSystem : EntitySystem
 
     #endregion
 
-    private bool TryFindActiveGangwarRule(out EntityUid ruleEntity, out GangwarRuleComponent ruleComponent)
-    {
-        var query = EntityQueryEnumerator<GangwarRuleComponent>();
-        while (query.MoveNext(out var uid, out var rule))
-        {
-            ruleEntity = uid;
-            ruleComponent = rule;
-            return true;
-        }
+    private bool IsNearGangCrate(EntityCoordinates coords, Entity<GangLeaderComponent> ent) =>
+        _lookup.GetEntitiesInRange<GangCrateComponent>(coords, ent.Comp.CrateExclusionZone).Count > 0;
 
-        ruleEntity = default;
-        ruleComponent = new GangwarRuleComponent();
-        return false;
+    private static bool IsValidGangAppearance(Color color, string name)
+    {
+        return color.A >= 0.9f
+            && Color.ToHsv(color).Z >= 0.70f
+            && name.Length >= 4
+            && name.Length <= 17;
     }
 
-    private static bool ColorsAreTooSimilar(Color colorA, Color colorB, float threshold = 0.15f)
-    {
-        var redDiff = colorA.R - colorB.R;
-        var greenDiff = colorA.G - colorB.G;
-        var blueDiff = colorA.B - colorB.B;
-        return MathF.Sqrt(redDiff * redDiff + greenDiff * greenDiff + blueDiff * blueDiff) < threshold;
-    }
 }

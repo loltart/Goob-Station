@@ -39,8 +39,14 @@ public sealed class QuickhackSystem : EntitySystem
             if (comp.FiringResetAt == null || cur < comp.FiringResetAt)
                 continue;
 
+            if (comp.FiringTarget is { } target && !TerminatingOrDeleted(target)
+                && TryComp<DoorComponent>(target, out var door)
+                && CanHack((uid, comp), target, door))
+                _doorSystem.TryOpen(target, door, predicted: true);
+
             comp.FiringResetAt = null;
-            comp.Firing = false;
+            comp.FiringTarget = null;
+            comp.State = QuickhackState.Idle;
             Dirty(uid, comp);
         }
     }
@@ -58,22 +64,30 @@ public sealed class QuickhackSystem : EntitySystem
         args.Handled = true;
         _useDelay.TryResetDelay(uid);
 
-        if (_chargesSystem.IsEmpty((uid, charges))
-            || _doorSystem.IsBolted(target)
-            || door.State != DoorState.Closed
-            || !_doorSystem.TryOpen(target, door, predicted: true))
-        {
-            _popup.PopupClient(Loc.GetString("quickhack-failed"), args.User, args.User);
-            _audio.PlayPredicted(comp.FailSound, uid, args.User);
-            args.Handled = true;
+        if (!CanHack((uid, comp), target, door, args.User))
             return;
-        }
 
         _chargesSystem.TryUseCharge((uid, charges));
         _audio.PlayPredicted(comp.UseSound, uid, args.User);
 
-        comp.Firing = true;
+        comp.State = QuickhackState.Firing;
         comp.FiringResetAt = _timing.CurTime + comp.ShootAnimation;
+        comp.FiringTarget = target;
         Dirty(uid, comp);
+    }
+
+    private bool CanHack(Entity<QuickhackComponent> ent, EntityUid target, DoorComponent door, EntityUid? user = null)
+    {
+        var canHack = !_doorSystem.IsBolted(target)
+            && door.State == DoorState.Closed
+            && (user is null || TryComp<LimitedChargesComponent>(ent, out var charges) && !_chargesSystem.IsEmpty((ent.Owner, charges)));
+
+        if (!canHack && user is { } recipient)
+        {
+            _popup.PopupClient(Loc.GetString("quickhack-failed"), recipient, recipient);
+            _audio.PlayPredicted(ent.Comp.FailSound, ent, recipient);
+        }
+
+        return canHack;
     }
 }

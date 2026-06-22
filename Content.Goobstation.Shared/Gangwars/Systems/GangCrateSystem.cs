@@ -118,6 +118,8 @@ public sealed class GangCrateSystem : EntitySystem
                 _audio.PlayGlobal(ent.Comp.RewardSound, memberUid);
             }
         }
+
+        QueueDel(ent.Owner);
     }
 
     private void OnUnanchorAttempt(Entity<GangCrateComponent> ent, ref UnanchorAttemptEvent args)

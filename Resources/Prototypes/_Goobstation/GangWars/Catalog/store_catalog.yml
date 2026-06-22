@@ -41,7 +41,7 @@
   id: GangStoreOmnizine
   name: gang-store-listing-omnizine-name
   description: gang-store-listing-omnizine-desc
-  productEntity: EmergencyMedipen
+  productEntity: OmnizineMedipen
   categories:
   - GangStoreConsumables
   cost:
