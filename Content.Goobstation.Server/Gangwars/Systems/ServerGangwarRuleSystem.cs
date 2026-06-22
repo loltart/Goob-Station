@@ -2,9 +2,9 @@ using Content.Goobstation.Server.Antag;
 using Content.Goobstation.Shared.Gangwars.Components;
 using Content.Goobstation.Shared.Gangwars.Events;
 using Content.Server._DV.CartridgeLoader.Cartridges;
+using Content.Server.CartridgeLoader;
 using Content.Server.GameTicking.Rules;
 using Content.Shared.Access.Components;
-using Content.Shared.CartridgeLoader;
 using Content.Shared.PDA;
 using Content.Server.Pinpointer;
 using Content.Server.Radio.Components;
@@ -29,6 +29,7 @@ public sealed class ServerGangwarRuleSystem : GameRuleSystem<GangwarRuleComponen
     [Dependency] private readonly EntityLookupSystem _lookup = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly NanoChatCartridgeSystem _nanoChatCartridge = default!;
+    [Dependency] private readonly CartridgeLoaderSystem _cartridgeLoader = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
 
     public override void Initialize()
@@ -201,16 +202,7 @@ public sealed class ServerGangwarRuleSystem : GameRuleSystem<GangwarRuleComponen
             Loc.GetString("gangwar-tipoff-nanochat-message", ("location", locationName), ("seconds", headstartSeconds)));
     }
 
-    private bool PdaHasNanoChat(EntityUid pdaUid)
-    {
-        if (!TryComp<CartridgeLoaderComponent>(pdaUid, out var loader))
-            return false;
-
-        foreach (var program in loader.BackgroundPrograms)
-            if (HasComp<NanoChatCartridgeComponent>(program))
-                return true;
-
-        return false;
-    }
+    private bool PdaHasNanoChat(EntityUid pdaUid) =>
+        _cartridgeLoader.HasProgram<NanoChatCartridgeComponent>(pdaUid);
 }
 
