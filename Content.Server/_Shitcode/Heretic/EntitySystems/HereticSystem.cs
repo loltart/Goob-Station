@@ -80,7 +80,6 @@ public sealed partial class HereticSystem : SharedHereticSystem
     [Dependency] private readonly ActionContainerSystem _actionContainer = default!;
     [Dependency] private readonly NpcFactionSystem _npcFaction = default!;
     [Dependency] private readonly HandsSystem _hands = default!;
-    [Dependency] private readonly AlertLevel.AmberAlertSystem _amberAlert = default!;
 
     [Dependency] private readonly IRobustRandom _rand = default!;
     [Dependency] private readonly IPlayerManager _playerMan = default!;
@@ -490,7 +489,7 @@ public sealed partial class HereticSystem : SharedHereticSystem
         ent.Comp.ChosenRitual = null;
         Dirty(ent);
 
-        _amberAlert.UnlockAmberAlert();
+        RaiseLocalEvent(new AlertLevel.AmberAlertThreatEvent());
 
         // how???
         if (ent.Comp.CurrentPath == null)

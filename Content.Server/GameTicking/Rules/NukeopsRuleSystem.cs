@@ -125,7 +125,6 @@ public sealed class NukeopsRuleSystem : GameRuleSystem<NukeopsRuleComponent>
     [Dependency] private readonly StationSystem _stationSystem = default!;
     [Dependency] private readonly ChatSystem _chat = default!;
     [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly Content.Server.AlertLevel.AmberAlertSystem _amberAlert = default!; // Goobstation
     // goob edit end
 
     private static readonly ProtoId<CurrencyPrototype> TelecrystalCurrencyPrototype = "Telecrystal";
@@ -436,7 +435,7 @@ public sealed class NukeopsRuleSystem : GameRuleSystem<NukeopsRuleComponent>
                 var timeRemain = nukeops.WarNukieArriveDelay + Timing.CurTime;
                 ev.DeclaratorEntity.Comp.ShuttleDisabledTime = timeRemain;
 
-                _amberAlert.UnlockAmberAlert(); // Goobstation - war declaration unlocks amber alert
+                RaiseLocalEvent(new Content.Server.AlertLevel.AmberAlertThreatEvent()); // Goobstation - war declaration unlocks amber alert
 
                 DistributeExtraTc((uid, nukeops));
             }

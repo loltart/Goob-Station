@@ -24,9 +24,13 @@ public sealed class AmberAlertSystem : EntitySystem
 
     public override void Initialize()
     {
+        SubscribeLocalEvent<AmberAlertThreatEvent>(OnThreat);
         SubscribeLocalEvent<AlertLevelSelectAttemptEvent>(OnAlertSelectAttempt);
         SubscribeLocalEvent<CommunicationsConsoleComponent, GetVerbsEvent<AlternativeVerb>>(OnGetVerbs);
     }
+
+    private void OnThreat(AmberAlertThreatEvent ev) =>
+        UnlockAmberAlert();
 
     /// <summary>
     /// Unlocks amber alert, allowing it to be manually activated from a
@@ -156,3 +160,11 @@ public record struct AlertLevelSelectAttemptEvent(EntityUid Station, EntityUid C
 {
     public bool Cancelled;
 }
+
+/// <summary>
+/// Goobstation.
+/// Broadcast when a major station threat manifests (war declaration, slasher/heretic/shadowling
+/// ascension, xenomorph outbreak, ...). The amber alert system listens for this to unlock the
+/// amber alert level for manual activation from a communications console.
+/// </summary>
+public sealed class AmberAlertThreatEvent : EntityEventArgs { }

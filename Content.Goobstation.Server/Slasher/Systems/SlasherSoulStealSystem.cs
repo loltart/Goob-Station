@@ -58,7 +58,6 @@ public sealed class SlasherSoulStealSystem : EntitySystem
     [Dependency] private readonly StationSystem _stationSystem = default!;
     [Dependency] private readonly ChatSystem _chatSystem = default!;
     [Dependency] private readonly AlertLevelSystem _alertLevel = default!;
-    [Dependency] private readonly AmberAlertSystem _amberAlert = default!;
     [Dependency] private readonly SharedWeatherSystem _weather = default!;
     [Dependency] private readonly IPrototypeManager _protoMan = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
@@ -238,7 +237,7 @@ public sealed class SlasherSoulStealSystem : EntitySystem
         {
             comp.HasAscended = true;
 
-            _amberAlert.UnlockAmberAlert();
+            RaiseLocalEvent(new AmberAlertThreatEvent());
 
             // Initialize the light flicker timer when ascending
             comp.NextLightFlicker = _timing.CurTime + comp.LightFlickerInterval;
