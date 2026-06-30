@@ -45,6 +45,7 @@ public sealed class XenomorphsRuleSystem : GameRuleSystem<XenomorphsRuleComponen
     [Dependency] private readonly RoundEndSystem _roundEnd = default!;
     [Dependency] private readonly StationSystem _station = default!;
     [Dependency] private readonly AudioSystem _audioSystem = default!; // Goobstation - Play music on announcement
+    [Dependency] private readonly AlertLevel.AmberAlertSystem _amberAlert = default!;
 
     public override void Initialize()
     {
@@ -245,6 +246,8 @@ public sealed class XenomorphsRuleSystem : GameRuleSystem<XenomorphsRuleComponen
         if (!component.Announced && component.AnnouncementTime <= _timing.CurTime)
         {
             component.Announced = true;
+
+            _amberAlert.UnlockAmberAlert();
 
             if (!string.IsNullOrEmpty(component.Announcement))
                 _chat.DispatchGlobalAnnouncement(Loc.GetString(component.Announcement), component.Sender != null ? Loc.GetString(component.Sender) : null, colorOverride: component.AnnouncementColor);

@@ -44,6 +44,7 @@ public sealed class ShadowlingAscensionEggSystem : EntitySystem
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly StationSystem _station = default!;
     [Dependency] private readonly AlertLevelSystem _alertLevel = default!;
+    [Dependency] private readonly AmberAlertSystem _amberAlert = default!;
     [Dependency] private readonly ChatSystem _chatSystem = default!;
     [Dependency] private readonly DamageableSystem _damageable = default!;
     [Dependency] private readonly ServerGlobalSoundSystem _globalSound = default!;
@@ -179,6 +180,8 @@ public sealed class ShadowlingAscensionEggSystem : EntitySystem
         var stationUid = _station.GetStationInMap(Transform(uid).MapID);
         if (stationUid != null)
             _alertLevel.SetLevel(stationUid.Value, "delta", true, true, true, true);
+
+        _amberAlert.UnlockAmberAlert();
 
         var effectEnt = Spawn(component.ShadowlingInside, Transform(eggUid).Coordinates);
         component.ShadowlingInsideEntity = effectEnt;
